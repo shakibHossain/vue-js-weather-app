@@ -15,10 +15,11 @@
       <div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
         <div class="location-box">
           <div class="location">{{ weather.name }}, {{ weather.sys.country }}</div>
-          <div class="date">{{ dateBuilder() }}</div>
+          <div class="time">{{ time.time_12 }}</div>
+          <div class="date">{{ time.date_time_txt }}</div>
         </div>
         <div class="weather-box">
-          <div class="temp">{{ Math.round(weather.main.temp) }}c</div>
+          <div class="temp">{{ Math.round(weather.main.temp) }}°C</div>
           <div class="weather">{{ weather.weather[0].main }}</div>
         </div>
       </div>
@@ -31,10 +32,13 @@ export default {
   name: "App",
   data() {
     return {
-      api_key: "c8a384ae6be1ef5027bb29768f6484d5",
+      api_key: "",
       url_base: "https://api.openweathermap.org/data/2.5/",
       query: "",
-      weather: {}
+      weather: {},
+      api_key_time: "",
+      url_base_time: "https://api.ipgeolocation.io/",
+      time: {}
     };
   },
   methods: {
@@ -51,38 +55,26 @@ export default {
     },
     setResults(results) {
       this.weather = results;
+      return fetch(
+        `${this.url_base_time}timezone?apiKey=${this.api_key_time}&lat=${this.weather.coord.lat}&long=${this.weather.coord.lon}`
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(this.setTime);
     },
-    dateBuilder() {
-      let d = new Date();
-      let months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-      ];
-      let days = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-      ];
-      let day = days[d.getDay()];
-      let date = d.getDate();
-      let month = months[d.getMonth()];
-      let year = d.getFullYear();
-      let time = d.toLocaleTimeString();
-      return `${time} ${day} ${date} ${month} ${year}`;
+    setTime(time) {
+      let stringDateText = JSON.stringify(time.date_time_txt);
+      let formattedDate = stringDateText.slice(1, -10);
+      time.date_time_txt = formattedDate;
+
+      let stringTimeText = JSON.stringify(time.time_12);
+      let storeLast = stringTimeText.slice(9, -1);
+      let formattedTime = stringTimeText.slice(2, -7);
+      let finalTime = formattedTime + storeLast;
+      time.time_12 = finalTime;
+
+      this.time = time;
     }
   }
 };
@@ -155,7 +147,8 @@ main {
   text-shadow: 1px 3px rgba(0, 0, 0, 0.25);
 }
 
-.location-box .date {
+.location-box .date,
+.time {
   color: #fff;
   font-size: 20px;
   font-weight: 300;
