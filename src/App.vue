@@ -32,11 +32,11 @@ export default {
   name: "App",
   data() {
     return {
-      api_key: "c8a384ae6be1ef5027bb29768f6484d5",
+      api_key: "",
       url_base: "https://api.openweathermap.org/data/2.5/",
       query: "",
       weather: {},
-      api_key_time: "207ea26cf0a34516a44f95e23da308ed",
+      api_key_time: "",
       url_base_time: "https://api.ipgeolocation.io/",
       time: {}
     };
