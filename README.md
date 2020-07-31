@@ -8,3 +8,5 @@ Features -
 2. User can search using city name, state code and country code divided by comma and by geographic coordinates.
 3. Open weather API used to fetch weather data.
 4. Timezone API (ipgeolocation.io) used to fetch date and time of given location.
+
+Live url - https://vue-js-weather-app.netlify.app/
